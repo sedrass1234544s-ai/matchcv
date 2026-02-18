@@ -4,7 +4,6 @@ import { AnalysisResult } from "../types";
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const analyzeCV = async (imageData: string, mimeType: string): Promise<AnalysisResult> => {
-  // نستخدم موديل يدعم الصور ومتاح في v1beta
   const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
   const response = await model.generateContent({
