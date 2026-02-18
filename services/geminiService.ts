@@ -4,9 +4,10 @@ import { AnalysisResult } from "../types";
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const analyzeCV = async (imageData: string, mimeType: string): Promise<AnalysisResult> => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  // نستخدم موديل يدعم الصور ومتاح في v1beta
+  const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
-  const result = await model.generateContent({
+  const response = await model.generateContent({
     contents: [
       {
         role: "user",
@@ -31,6 +32,6 @@ export const analyzeCV = async (imageData: string, mimeType: string): Promise<An
     ],
   });
 
-  const text = result.response.text();
+  const text = response.response.text();
   return JSON.parse(text || "{}") as AnalysisResult;
 };
