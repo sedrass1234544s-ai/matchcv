@@ -4,7 +4,7 @@ import { AnalysisResult } from "../types";
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const analyzeCV = async (imageData: string, mimeType: string): Promise<AnalysisResult> => {
-  const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const response = await model.generateContent({
     contents: [
@@ -18,13 +18,15 @@ export const analyzeCV = async (imageData: string, mimeType: string): Promise<An
             },
           },
           {
-            text: `Analyze this CV/Resume. Provide a JSON response including:
-            - score (0-100)
-            - strengths
-            - weaknesses
-            - photo feedback
-            - improvements
-            - action items`,
+            text: `Analyze this CV/Resume. Return ONLY valid JSON with:
+{
+  "score": number,
+  "strengths": string[],
+  "weaknesses": string[],
+  "photo_feedback": string,
+  "improvements": string[],
+  "action_items": string[]
+}`
           },
         ],
       },
@@ -32,5 +34,11 @@ export const analyzeCV = async (imageData: string, mimeType: string): Promise<An
   });
 
   const text = response.response.text();
-  return JSON.parse(text || "{}") as AnalysisResult;
+
+  try {
+    return JSON.parse(text || "{}") as AnalysisResult;
+  } catch (err) {
+    console.error("JSON parse error:", text);
+    throw new Error("Invalid JSON response from AI");
+  }
 };
