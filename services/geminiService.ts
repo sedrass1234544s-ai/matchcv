@@ -4,7 +4,8 @@ import { AnalysisResult } from "../types";
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const analyzeCV = async (imageData: string, mimeType: string): Promise<AnalysisResult> => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
+
 
   const response = await model.generateContent({
     contents: [
