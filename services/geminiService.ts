@@ -1,21 +1,22 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AnalysisResult } from "../types";
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const analyzeCV = async (cvText: string): Promise<AnalysisResult> => {
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-pro",
-    });
-
-    const response = await model.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
             {
-              text: `
+              parts: [
+                {
+                  text: `
 Analyze the following CV and return ONLY valid JSON.
 
 CV:
@@ -30,21 +31,26 @@ JSON format:
   "improvements": string[],
   "action_items": string[]
 }
-              `,
+                  `,
+                },
+              ],
             },
           ],
-        },
-      ],
-    });
+        }),
+      }
+    );
 
-    const text = response.response.text();
+    const data = await response.json();
+
+    const text =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     const cleaned = text
-      ?.replace(/```json/g, "")
+      .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    return JSON.parse(cleaned || "{}") as AnalysisResult;
+    return JSON.parse(cleaned || "{}");
   } catch (error) {
     console.error("Gemini error:", error);
     throw new Error("Failed to analyze CV");
