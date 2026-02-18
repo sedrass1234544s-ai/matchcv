@@ -1,0 +1,6 @@
+
+{
+  "name": "MatchCV - Professional CV Builder & Analyzer",
+  "description": "A comprehensive tool to create professional resumes and analyze existing ones using AI to identify strengths, weaknesses, and optimization opportunities.",
+  "requestFramePermissions": ["camera"]
+}
