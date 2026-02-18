@@ -6,7 +6,6 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 export const analyzeCV = async (imageData: string, mimeType: string): Promise<AnalysisResult> => {
   const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
-
   const response = await model.generateContent({
     contents: [
       {
@@ -26,8 +25,7 @@ export const analyzeCV = async (imageData: string, mimeType: string): Promise<An
             3. List of weaknesses.
             4. Specific feedback on the professional photo (if present).
             5. Improvements for the content.
-            6. Suggested immediate action items.
-            Focus on layout, clarity, keyword optimization, and professional impact.`,
+            6. Suggested immediate action items.`,
           },
         ],
       },
